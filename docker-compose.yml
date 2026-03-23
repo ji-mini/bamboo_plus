@@ -23,6 +23,8 @@ services:
       context: .
       dockerfile: backend/Dockerfile
       target: production
+      args:
+        DATABASE_URL: ${DATABASE_URL:-postgresql://bamboo:bamboo1234@db:5432/bamboo_plus_db?schema=public}
     restart: unless-stopped
     environment:
       NODE_ENV: ${NODE_ENV:-production}

@@ -1,5 +1,7 @@
 FROM node:22-alpine AS base
 WORKDIR /app
+ARG DATABASE_URL=postgresql://bamboo:bamboo1234@db:5432/bamboo_plus_db?schema=public
+ENV DATABASE_URL=${DATABASE_URL}
 
 COPY backend/package*.json ./
 RUN npm ci
@@ -22,7 +24,9 @@ RUN npm run build
 
 FROM node:22-alpine AS production
 WORKDIR /app
+ARG DATABASE_URL=postgresql://bamboo:bamboo1234@db:5432/bamboo_plus_db?schema=public
 ENV NODE_ENV=production
+ENV DATABASE_URL=${DATABASE_URL}
 
 COPY backend/package*.json ./
 RUN npm ci
