@@ -9,16 +9,24 @@ if (!connectionString) {
 }
 
 const databaseUrl = new URL(connectionString);
+const hostname = databaseUrl.hostname;
+const sslMode = databaseUrl.searchParams.get("sslmode");
+const isLocalDatabaseHost = ["localhost", "127.0.0.1", "db", "postgres"].includes(hostname);
+const useSsl = sslMode === "require" || !isLocalDatabaseHost;
 
-// RDS 접속은 코드에서 SSL 옵션을 제어하므로 URL의 sslmode는 제거한다.
+// PrismaPg adapter에 SSL을 명시적으로 넘겨야 할 때만 활성화한다.
 databaseUrl.searchParams.delete("sslmode");
 databaseUrl.searchParams.delete("uselibpqcompat");
 
 const adapter = new PrismaPg({
   connectionString: databaseUrl.toString(),
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ...(useSsl
+    ? {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }
+    : {}),
 });
 
 export const prisma = new PrismaClient({ adapter });
