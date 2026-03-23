@@ -1,7 +1,5 @@
 FROM node:22-alpine AS base
 WORKDIR /app
-ARG DATABASE_URL=postgresql://bamboo:bamboo1234@db:5432/bamboo_plus_db?schema=public
-ENV DATABASE_URL=${DATABASE_URL}
 
 COPY backend/package*.json ./
 RUN npm ci
@@ -9,7 +7,6 @@ RUN npm ci
 COPY backend/tsconfig.json ./tsconfig.json
 COPY backend/prisma.config.ts ./prisma.config.ts
 COPY backend/prisma ./prisma
-RUN npx prisma generate
 
 COPY backend/src ./src
 
@@ -24,17 +21,14 @@ RUN npm run build
 
 FROM node:22-alpine AS production
 WORKDIR /app
-ARG DATABASE_URL=postgresql://bamboo:bamboo1234@db:5432/bamboo_plus_db?schema=public
 ENV NODE_ENV=production
-ENV DATABASE_URL=${DATABASE_URL}
 
-COPY backend/package*.json ./
-RUN npm ci
-
-COPY backend/tsconfig.json ./tsconfig.json
-COPY backend/prisma.config.ts ./prisma.config.ts
-COPY backend/prisma ./prisma
-RUN npx prisma generate
+COPY --from=base /app/package*.json ./
+COPY --from=base /app/tsconfig.json ./tsconfig.json
+COPY --from=base /app/prisma.config.ts ./prisma.config.ts
+COPY --from=base /app/prisma ./prisma
+COPY --from=base /app/node_modules ./node_modules
+RUN npm prune --omit=dev && npm cache clean --force
 
 COPY --from=build /app/dist ./dist
 COPY docker/backend/entrypoint.sh /usr/local/bin/entrypoint.sh
