@@ -5,7 +5,7 @@ type ApiResponse<T> = {
   data: T;
 };
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 const ADMIN_TOKEN_KEY = "bamboo_plus_admin_token";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
