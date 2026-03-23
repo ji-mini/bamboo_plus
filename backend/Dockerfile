@@ -40,4 +40,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 4001
 ENTRYPOINT ["sh", "/usr/local/bin/entrypoint.sh"]
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/src/server.js"]
