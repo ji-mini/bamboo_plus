@@ -5,6 +5,7 @@ COPY backend/package*.json ./
 RUN npm ci
 
 COPY backend/tsconfig.json ./tsconfig.json
+COPY backend/prisma.config.ts ./prisma.config.ts
 COPY backend/prisma ./prisma
 RUN npx prisma generate
 
@@ -27,6 +28,7 @@ COPY backend/package*.json ./
 RUN npm ci
 
 COPY backend/tsconfig.json ./tsconfig.json
+COPY backend/prisma.config.ts ./prisma.config.ts
 COPY backend/prisma ./prisma
 RUN npx prisma generate
 
